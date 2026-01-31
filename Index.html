@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Seconde Guerre Mondiale</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Special+Elite&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sepia: #f4e8d0;
+            --dark-olive: #3d4a2c;
+            --vintage-red: #8b1e1e;
+            --aged-paper: #e8dcc4;
+            --ink-black: #1a1a1a;
+            --military-green: #4a5d3c;
+            --gold-accent: #d4a574;
+        }
+
+        body {
+            font-family: 'Libre Baskerville', serif;
+            background: linear-gradient(135deg, var(--aged-paper) 0%, var(--sepia) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(26,26,26,0.15) 100%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quiz-card {
+            background: var(--sepia);
+            border: 3px double var(--dark-olive);
+            box-shadow: 
+                0 10px 40px rgba(0,0,0,0.3),
+                inset 0 0 60px rgba(212,165,116,0.1),
+                0 0 0 8px var(--aged-paper),
+                0 0 0 11px var(--dark-olive);
+            padding: 50px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border: 1px solid var(--gold-accent);
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--dark-olive);
+        }
+
+        .corner-decoration.top-left {
+            top: 25px;
+            left: 25px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.top-right {
+            top: 25px;
+            right: 25px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: 25px;
+            left: 25px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: 25px;
+            right: 25px;
+            border-left: none;
+            border-top: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3em;
+            font-weight: 900;
+            color: var(--vintage-red);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-family: 'Special Elite', monospace;
+            font-size: 1.1em;
+            color: var(--dark-olive);
+            letter-spacing: 2px;
+            border-top: 2px solid var(--dark-olive);
+            border-bottom: 2px solid var(--dark-olive);
+            padding: 8px 0;
+            display: inline-block;
+        }
+
+        .progress {
+            font-family: 'Special Elite', monospace;
+            text-align: center;
+            color: var(--military-green);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+
+        .question-container {
+            margin-bottom: 35px;
+        }
+
+        .question {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--ink-black);
+            margin-bottom: 30px;
+            line-height: 1.4;
+            text-align: center;
+            padding: 20px;
+            background: rgba(212,165,116,0.15);
+            border-left: 4px solid var(--vintage-red);
+            border-right: 4px solid var(--vintage-red);
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .answer-btn {
+            font-family: 'Libre Baskerville', serif;
+            background: var(--aged-paper);
+            border: 2px solid var(--dark-olive);
+            padding: 20px 30px;
+            font-size: 1.1em;
+            color: var(--ink-black);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .answer-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--military-green), var(--dark-olive));
+            transition: width 0.3s ease;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .answer-btn:hover:not(:disabled) {
+            transform: translateX(5px);
+            border-color: var(--military-green);
+            box-shadow: -5px 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .answer-btn:hover:not(:disabled)::before {
+            width: 100%;
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #4a7c59 0%, #5d9e6f 100%);
+            color: white;
+            border-color: #2d5a3d;
+            animation: correctPulse 0.6s ease-out;
+            box-shadow: 
+                0 0 20px rgba(74,124,89,0.6),
+                0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .answer-btn.incorrect {
+            background: linear-gradient(135deg, #8b1e1e 0%, #a82828 100%);
+            color: white;
+            border-color: #5d1414;
+            animation: shake 0.5s ease-out;
+            box-shadow: 
+                0 0 20px rgba(139,30,30,0.6),
+                0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 12px;
+            vertical-align: middle;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .answer-btn.correct .indicator {
+            opacity: 1;
+            background: #90EE90;
+            animation: glow 1s ease-in-out infinite;
+        }
+
+        .answer-btn.incorrect .indicator {
+            opacity: 1;
+            background: #FF6B6B;
+            animation: glow 1s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px currentColor; }
+            50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+        }
+
+        .next-btn {
+            font-family: 'Special Elite', monospace;
+            background: var(--dark-olive);
+            color: var(--sepia);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .next-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .next-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .next-btn:hover {
+            background: var(--military-green);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .next-btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .results h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            color: var(--vintage-red);
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .score {
+            font-family: 'Special Elite', monospace;
+            font-size: 3em;
+            color: var(--dark-olive);
+            margin: 30px 0;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .results p {
+            font-size: 1.2em;
+            color: var(--ink-black);
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .restart-btn {
+            font-family: 'Special Elite', monospace;
+            background: var(--vintage-red);
+            color: var(--sepia);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 30px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background: #a82828;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .quiz-card {
+                padding: 30px 20px;
+            }
+            
+            .question {
+                font-size: 1.2em;
+                padding: 15px;
+            }
+            
+            .answer-btn {
+                padding: 15px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="quiz-card">
+            <div class="corner-decoration top-left"></div>
+            <div class="corner-decoration top-right"></div>
+            <div class="corner-decoration bottom-left"></div>
+            <div class="corner-decoration bottom-right"></div>
+            
+            <header>
+                <h1>Quiz<br>1939-1945</h1>
+                <div class="subtitle">Seconde Guerre Mondiale</div>
+            </header>
+
+            <div id="quiz-content"></div>
+            
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--dark-olive); opacity: 0.7;">
+                <p style="font-family: 'Special Elite', monospace; font-size: 0.9em; color: var(--military-green); letter-spacing: 1px;">
+                    Créé par Maxx
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                event: "Invasion de la Pologne et début de la Seconde Guerre mondiale",
+                correctDate: "1er septembre 1939",
+                wrongDates: ["1er août 1939", "15 septembre 1939"]
+            },
+            {
+                event: "Opération Barbarossa (invasion de l'URSS)",
+                correctDate: "22 juin 1941",
+                wrongDates: ["15 juin 1941", "1er juillet 1941"]
+            },
+            {
+                event: "Attaque de Pearl Harbor",
+                correctDate: "7 décembre 1941",
+                wrongDates: ["8 novembre 1941", "15 décembre 1941"]
+            },
+            {
+                event: "Bombardements atomiques d'Hiroshima et Nagasaki",
+                correctDate: "6 et 9 août 1945",
+                wrongDates: ["1er et 3 août 1945", "15 et 18 août 1945"]
+            },
+            {
+                event: "Débarquement de Normandie (Jour-J)",
+                correctDate: "6 juin 1944",
+                wrongDates: ["4 juin 1944", "10 juin 1944"]
+            },
+            {
+                event: "Libération de Paris",
+                correctDate: "25 août 1944",
+                wrongDates: ["20 août 1944", "30 août 1944"]
+            },
+            {
+                event: "Capitulation allemande signée à Berlin",
+                correctDate: "8 mai 1945",
+                wrongDates: ["5 mai 1945", "12 mai 1945"]
+            },
+            {
+                event: "Conférence de Wannsee (mise en place de la Solution Finale)",
+                correctDate: "Janvier 1942",
+                wrongDates: ["Mars 1942", "Novembre 1941"]
+            },
+            {
+                event: "Création de l'ONU",
+                correctDate: "26 juin 1945",
+                wrongDates: ["15 juillet 1945", "1er septembre 1945"]
+            },
+            {
+                event: "Appel du Général De Gaulle depuis Londres",
+                correctDate: "18 juin 1940",
+                wrongDates: ["14 juin 1940", "22 juin 1940"]
+            },
+            {
+                event: "Signature de l'armistice à Rethondes",
+                correctDate: "22 juin 1940",
+                wrongDates: ["18 juin 1940", "25 juin 1940"]
+            },
+            {
+                event: "Rencontre de Montoire (début de la collaboration)",
+                correctDate: "24 octobre 1940",
+                wrongDates: ["20 octobre 1940", "28 octobre 1940"]
+            },
+            {
+                event: "Mise en place du STO (Service du Travail Obligatoire)",
+                correctDate: "Février 1943",
+                wrongDates: ["Janvier 1943", "Mars 1943"]
+            },
+            {
+                event: "Création du CNR (Conseil National de la Résistance)",
+                correctDate: "27 mai 1943",
+                wrongDates: ["15 mai 1943", "5 juin 1943"]
+            },
+            {
+                event: "Libération de Paris par la Résistance et la 2e DB",
+                correctDate: "25 août 1944",
+                wrongDates: ["22 août 1944", "28 août 1944"]
+            },
+            // Questions inversées : date donnée, événement à trouver
+            {
+                event: "1er septembre 1939",
+                correctDate: "Invasion de la Pologne et début de la Seconde Guerre mondiale",
+                wrongDates: ["Début de l'opération Barbarossa", "Signature du pacte germano-soviétique"],
+                isReversed: true
+            },
+            {
+                event: "22 juin 1941",
+                correctDate: "Opération Barbarossa (invasion de l'URSS)",
+                wrongDates: ["Début du siège de Leningrad", "Bataille de Moscou"],
+                isReversed: true
+            },
+            {
+                event: "7 décembre 1941",
+                correctDate: "Attaque de Pearl Harbor",
+                wrongDates: ["Bataille de Midway", "Débarquement américain aux Philippines"],
+                isReversed: true
+            },
+            {
+                event: "6 et 9 août 1945",
+                correctDate: "Bombardements atomiques d'Hiroshima et Nagasaki",
+                wrongDates: ["Capitulation japonaise", "Conférence de Potsdam"],
+                isReversed: true
+            },
+            {
+                event: "6 juin 1944",
+                correctDate: "Débarquement de Normandie (Jour-J)",
+                wrongDates: ["Libération de Paris", "Bataille des Ardennes"],
+                isReversed: true
+            },
+            {
+                event: "25 août 1944",
+                correctDate: "Libération de Paris",
+                wrongDates: ["Débarquement de Provence", "Libération de Strasbourg"],
+                isReversed: true
+            },
+            {
+                event: "8 mai 1945",
+                correctDate: "Capitulation allemande signée à Berlin",
+                wrongDates: ["Suicide d'Hitler", "Prise de Berlin par l'Armée rouge"],
+                isReversed: true
+            },
+            {
+                event: "Janvier 1942",
+                correctDate: "Conférence de Wannsee (mise en place de la Solution Finale)",
+                wrongDates: ["Début des déportations massives", "Ouverture du camp d'Auschwitz"],
+                isReversed: true
+            },
+            {
+                event: "26 juin 1945",
+                correctDate: "Création de l'ONU",
+                wrongDates: ["Conférence de Yalta", "Conférence de Potsdam"],
+                isReversed: true
+            },
+            {
+                event: "18 juin 1940",
+                correctDate: "Appel du Général De Gaulle depuis Londres",
+                wrongDates: ["Signature de l'armistice", "Début de la bataille de France"],
+                isReversed: true
+            },
+            {
+                event: "22 juin 1940",
+                correctDate: "Signature de l'armistice à Rethondes",
+                wrongDates: ["Entrée des Allemands à Paris", "Appel du Général De Gaulle"],
+                isReversed: true
+            },
+            {
+                event: "24 octobre 1940",
+                correctDate: "Rencontre de Montoire (début de la collaboration)",
+                wrongDates: ["Mise en place du régime de Vichy", "Révocation du statut des Juifs"],
+                isReversed: true
+            },
+            {
+                event: "Février 1943",
+                correctDate: "Mise en place du STO (Service du Travail Obligatoire)",
+                wrongDates: ["Bataille de Stalingrad", "Création du CNR"],
+                isReversed: true
+            },
+            {
+                event: "27 mai 1943",
+                correctDate: "Création du CNR (Conseil National de la Résistance)",
+                wrongDates: ["Arrestation de Jean Moulin", "Libération de la Corse"],
+                isReversed: true
+            },
+            {
+                event: "25 août 1944",
+                correctDate: "Libération de Paris par la Résistance et la 2e DB",
+                wrongDates: ["Débarquement en Normandie", "Bataille de la poche de Falaise"],
+                isReversed: true
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let shuffledQuestions = [];
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(quizData);
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+        }
+
+        function displayQuestion() {
+            answered = false;
+            const question = shuffledQuestions[currentQuestion];
+            const allAnswers = shuffleArray([
+                { text: question.correctDate, correct: true },
+                { text: question.wrongDates[0], correct: false },
+                { text: question.wrongDates[1], correct: false }
+            ]);
+
+            const questionText = question.isReversed 
+                ? `Quel événement s'est produit le <strong>${question.event}</strong> ?`
+                : question.event;
+
+            const html = `
+                <div class="progress">Question ${currentQuestion + 1} / ${shuffledQuestions.length}</div>
+                <div class="question-container">
+                    <div class="question">${questionText}</div>
+                    <div class="answers">
+                        ${allAnswers.map((answer, index) => `
+                            <button class="answer-btn" onclick="checkAnswer(${answer.correct}, this)">
+                                <span class="indicator"></span>
+                                ${answer.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                <button class="next-btn" onclick="nextQuestion()" style="display: none;">Question Suivante</button>
+            `;
+
+            document.getElementById('quiz-content').innerHTML = html;
+        }
+
+        function checkAnswer(isCorrect, button) {
+            if (answered) return;
+            answered = true;
+
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                button.classList.add('correct');
+                score++;
+            } else {
+                button.classList.add('incorrect');
+                // Trouver et afficher la bonne réponse en vert
+                const question = shuffledQuestions[currentQuestion];
+                buttons.forEach(btn => {
+                    if (btn.textContent.trim().includes(question.correctDate)) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            document.querySelector('.next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < shuffledQuestions.length) {
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            const noteSur20 = ((score / shuffledQuestions.length) * 20).toFixed(1);
+            let message = '';
+            
+            if (percentage === 100) {
+                message = "Parfait ! Vous êtes un véritable expert de la Seconde Guerre mondiale ! 🎖️";
+            } else if (percentage >= 80) {
+                message = "Excellent ! Vous connaissez très bien cette période historique. 👏";
+            } else if (percentage >= 60) {
+                message = "Bien joué ! Vous avez de bonnes connaissances. 📚";
+            } else if (percentage >= 40) {
+                message = "Pas mal ! Mais il reste encore des dates à réviser. 📖";
+            } else {
+                message = "Continuez vos révisions, l'Histoire a besoin de vous ! 💪";
+            }
+
+            const html = `
+                <div class="results">
+                    <h2>Résultats</h2>
+                    <div class="score">${score} / ${shuffledQuestions.length}</div>
+                    <p style="font-size: 2em; color: var(--vintage-red); font-family: 'Playfair Display', serif; font-weight: 700; margin: 20px 0;">
+                        Note : ${noteSur20} / 20
+                    </p>
+                    <p><strong>${percentage}%</strong> de bonnes réponses</p>
+                    <p>${message}</p>
+                    <button class="restart-btn" onclick="restartQuiz()">Recommencer</button>
+                </div>
+            `;
+
+            document.getElementById('quiz-content').innerHTML = html;
+        }
+
+        function restartQuiz() {
+            initQuiz();
+            displayQuestion();
+        }
+
+        // Démarrer le quiz
+        initQuiz();
+        displayQuestion();
+    </script>
+</body>
+</html>
